@@ -10,10 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180106091156) do
+ActiveRecord::Schema.define(version: 20180122092807) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "addresses", force: :cascade do |t|
+    t.string "street", null: false
+    t.string "city", null: false
+    t.bigint "state_id", null: false
+    t.string "zipcode", null: false
+    t.index ["state_id"], name: "index_addresses_on_state_id"
+  end
 
   create_table "customers", force: :cascade do |t|
     t.string "first_name", null: false
@@ -27,6 +35,26 @@ ActiveRecord::Schema.define(version: 20180106091156) do
     t.index "lower((last_name)::text) varchar_pattern_ops", name: "index_customers_on_lower_last_name_varchar_pattern_ops"
     t.index ["email"], name: "index_customers_on_email", unique: true
     t.index ["username"], name: "index_customers_on_username", unique: true
+  end
+
+  create_table "customers_billing_addresses", force: :cascade do |t|
+    t.bigint "customer_id", null: false
+    t.bigint "address_id", null: false
+    t.index ["address_id"], name: "index_customers_billing_addresses_on_address_id"
+    t.index ["customer_id"], name: "index_customers_billing_addresses_on_customer_id"
+  end
+
+  create_table "customers_shipping_addresses", force: :cascade do |t|
+    t.bigint "customer_id", null: false
+    t.bigint "address_id", null: false
+    t.boolean "primary", default: false, null: false
+    t.index ["address_id"], name: "index_customers_shipping_addresses_on_address_id"
+    t.index ["customer_id"], name: "index_customers_shipping_addresses_on_customer_id"
+  end
+
+  create_table "states", force: :cascade do |t|
+    t.string "code", null: false
+    t.string "name", null: false
   end
 
   create_table "users", force: :cascade do |t|
