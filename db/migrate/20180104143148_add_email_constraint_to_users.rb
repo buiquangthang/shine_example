@@ -8,6 +8,7 @@ class AddEmailConstraintToUsers < ActiveRecord::Migration[5.1]
       CHECK ( email ~* '^[^@]+@example\\.com' )
     }
   end
+
   def down
     execute %{
       ALTER TABLE
